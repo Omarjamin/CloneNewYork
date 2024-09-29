@@ -1,0 +1,16 @@
+document.addEventListener("DOMContentLoaded",()=>{let e="Q9g0LF0Pk3m1RpAG05nUd6uhmJO4X5sp",t=document.getElementById("articles"),a=document.getElementById("search-button"),r=document.getElementById("articles-title"),i="https://via.placeholder.com/300";async function n(t){try{let a=await fetch(`https://api.nytimes.com/svc/topstories/v2/${t}.json?api-key=${e}`);if(!a.ok)throw Error("Network response was not ok");return(await a.json()).results.slice(0,3)}catch(e){return console.error(`Error fetching Top Stories for ${t}:`,e),[]}}async function o(){let e=[];for(let t of["world","business","technology","health","sports"]){let a=await n(t);a.length>0&&e.push({section:t,articles:a})}t.innerHTML="",e.forEach(({section:e,articles:a})=>{let r=document.createElement("h3");r.innerText=e.charAt(0).toUpperCase()+e.slice(1),t.appendChild(r);let n=document.createElement("div");n.classList.add("articles-grid"),a.forEach(e=>{let t=e.multimedia&&e.multimedia.length>0?e.multimedia[0].url:i,a=document.createElement("div");a.classList.add("article-item"),a.innerHTML=`
+                    <img src="${t}" alt="${e.title||"No Title"}">
+                    <div class="article-content">
+                        <h4>${e.title||"No Title"}</h4>
+                        <p>${e.abstract||"No Abstract Available"}</p>
+                        <a href="${e.url||"#"}" target="_blank">Read more</a>
+                    </div>
+                `,n.appendChild(a)}),t.appendChild(n)})}async function c(t,a){try{let r=new URLSearchParams({q:t,"api-key":e}),i=await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?${r.toString()}`);if(!i.ok)throw Error("Network response was not ok");let n=await i.json();s(n.response.docs,a)}catch(e){console.error(`Error fetching ${a} articles:`,e),l(`Failed to fetch ${a} articles. Please try again.`)}}function s(e,a){r.innerText=a,t.innerHTML="";let n=document.createElement("div");n.classList.add("articles-grid"),e.forEach(e=>{let t=e.multimedia&&e.multimedia.length>0?`https://static01.nyt.com/${e.multimedia[0].url}`:i,a=document.createElement("div");a.classList.add("article-item"),a.innerHTML=`
+                <img src="${t}" alt="${e.headline?.main||"No Title"}">
+                <div class="article-content">
+                    <h4>${e.headline?.main||"No Title"}</h4>
+                    <p>${e.snippet||"No Snippet Available"}</p>
+                    <a href="${e.web_url||"#"}" target="_blank">Read more</a>
+                </div>
+            `,n.appendChild(a)}),t.appendChild(n)}function l(e){t.innerHTML=`<div class="error">${e}</div>`}async function d(){let t=document.getElementById("input-for-word").value;if(!t){l("Please enter a keyword to search.");return}try{let a=new URLSearchParams({q:t,"api-key":e}),r=await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?${a.toString()}`);if(!r.ok)throw Error("Network response was not ok");let i=await r.json();s(i.response.docs,"Search Results")}catch(e){console.error("Error fetching search results:",e),l("Failed to fetch articles. Please try again.")}}a.addEventListener("click",d),document.querySelectorAll(".section-button").forEach(e=>{e.addEventListener("click",t=>{t.preventDefault(),c(e.getAttribute("data-keyword"),e.textContent)})}),o()});
+//# sourceMappingURL=index.e271f68e.js.map
